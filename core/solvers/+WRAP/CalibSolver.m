@@ -9,7 +9,7 @@ classdef CalibSolver < handle & matlab.mixin.Heterogeneous
         target_model = 'kb';
         target_complexity = 4;
         meas_types = [];
-        aspect_ratios = [1:0.1:2];
+        aspect_ratios = [1.0:0.1:3];
     end
 
     methods(Static)

@@ -1,4 +1,4 @@
-function [errs, dx] = get_reprojerrs(corners, boards, model, proj_model)
+function [errs, dx, xhat, x] = get_reprojerrs(corners, boards, model, proj_model)
     if nargin < 4
         proj_model = 'sc';
     end
@@ -16,5 +16,6 @@ function [errs, dx] = get_reprojerrs(corners, boards, model, proj_model)
         xhat = [xhat xhat0];
     end
     dx = xhat(1:2,:) - x(1:2,:);
-    errs = vecnorm(dx);
+    %errs = vecnorm(dx);
+    errs = dx;
 end

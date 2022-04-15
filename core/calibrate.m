@@ -70,7 +70,6 @@ function [model, res, corners, boards] = calibrate(corners, boards, imgsize, var
     end
     [model, res, stats] = ransac.fit(meas_norm, varinput,...
                                     'nx', nx/A(1,1), 'ny', ny/A(1,1));
-
     if isempty(model)
         display('Did not return any model!');
         return
@@ -108,11 +107,13 @@ function [model, res] = unnormalize_model(proj_model, model, res, A, corners, bo
     res.errs = A(1,1) * res.errs;
     res.loss = A(1,1)^2 * res.loss;
     if nargin > 4
-        [~,dx] = get_reprojerrs(corners, boards, model, proj_model);
+        [~,dx, xhat, x] = get_reprojerrs(corners, boards, model, proj_model);
         res.reprojerrs = vecnorm(dx);
         res.rms = rms(res.reprojerrs);
         res.sqerrs = huberErr(res.reprojerrs, reprojT);
         res.wrms = rms(res.info.w.*res.reprojerrs);
+        res.x = x;
+        res.xhat= xhat;
         fprintf('\tfx: %3.4f  fy: %3.4f  cx: %3.4f  cy: %3.4f\n', model.K(1,1), model.K(2,2), model.K(1,3), model.K(2,3));
         fprintf('\tproj. params (%s): %3.4f %3.4f %3.4f %3.4f', proj_model, model.proj_params);
         fprintf('\n\tReproj. Err.   : %3.2f %c %3.2f (RMS %3.4f) px \n\tHuber Sqr. Err.: %3.2f %c %3.2f (RMS %3.4f) px \n\tConsensus set: %3.2f%%\n', mean(res.reprojerrs),177,std(res.reprojerrs), res.rms, mean(res.sqerrs),177,std(res.sqerrs), rms(res.sqerrs), res.ir*100);
